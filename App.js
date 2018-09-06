@@ -9,7 +9,8 @@ const autoIncrement = require('mongoose-auto-increment');
 
 const adminRoute = require('./modules/admin/admin-route');
 const teacherRoute = require('./modules/teacher/teacher-route');
-const config = require('./congif/config');
+const config = require('./config/config');
+
 // DATABASE CONNECTIONS
 mongoose.connect(config.mongo.url);
 mongoose.connection.on('connected', () => {
@@ -18,6 +19,8 @@ mongoose.connection.on('connected', () => {
 mongoose.connection.on('error', (err) => {
   console.log(`Database error ${err}`);
 });
+
+autoIncrement.initialize(connection);
 
 // MIDDLEWARES
 app.use(bodyParser.urlencoded({
@@ -35,10 +38,6 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
-
-const { connection } = mongoose;
-
-autoIncrement.initialize(connection);
 
 app.use('/admin', adminRoute);
 app.use('/teacher', teacherRoute);

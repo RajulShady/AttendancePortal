@@ -9,9 +9,8 @@ router.post('/getStudents', (req, res) => {
 });
 
 router.post('/takeAttendance', (req, res) => {
-    
-    const data = req.body;
-    controller.takeAttendance(data, res);
+  const data = req.body;
+  controller.takeAttendance(data, res);
 });
 
 module.exports = router;

@@ -28,9 +28,8 @@ router.post('/addTeacher', (req, res) => {
 });
 
 router.delete('/deleteTeacher', (req, res) => {
-    const data = { ...req.body };
-    controller.deleteTeacher(data, res);
+  const data = { ...req.body };
+  controller.deleteTeacher(data, res);
 });
-
 
 module.exports = router;
