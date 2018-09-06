@@ -1,6 +1,7 @@
 const Student = require('../modules/student/student-model');
 const Teacher = require('../modules/teacher/teacher-model');
 const Attendance = require('../modules/attendance/attendance-model');
+const TeacherLogin = require('../modules/login/login-teacher-model');
 
 const createNew = (data, Model) => {
     const user = new Model(data);

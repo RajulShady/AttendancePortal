@@ -3,13 +3,15 @@ const SuccessMessages = {
   RECORD_DELETED: 'Record has been deleted successfully',
   RECORDS_FOUND: 'Records has been found successfully',
   ADMIN_LOGIN_SUCCESSFUL: 'Admin login successful',
+  TEACHER_LOGIN_SUCCESSFUL: 'Teacher login successful',
+  PASSWORD_CHANGED: 'Password changed successfully',
 };
 
 const ErrorMessages = {
   INVALID_CEDENTIALS: 'Invalid credentials',
   INTERNAL_SERVER_ERROR: 'Internal server error',
   RECORD_NOT_EXIST: 'Record does not exist',
-  INVALID_PASSCODE: 'Invalid passcode',
+  INVALID_PASSCODE: 'Invalid password',
 };
 
 const otherStrings = {

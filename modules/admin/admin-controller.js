@@ -4,6 +4,7 @@ const { SuccessMessages, ErrorMessages } = require('../../constants');
 const mongoService = require('../../services/mongoService');
 const response = require('../../utils/response');
 const { otherStrings } = require('../../constants');
+const { Newteacher } = require('../login/login-teacher-model');
 
 const addStudent = async (data, res) => {
   try {
@@ -62,7 +63,11 @@ const addTeacher = async (data, res) => {
     if (!data.name) {
       return response.handleError(res, ErrorMessages.INVALID_CEDENTIALS, 400);
     } else {
-      await mongoService.createNew(data, Teacher);
+      const teacherAdded = await mongoService.createNew(data, Teacher);
+      const teacher = {
+        teacherId: teacherAdded.teacherId,
+      };
+      await mongoService.createNew(teacher, Newteacher);
       return response.handleSuccess(res, SuccessMessages.RECORD_SUCCESS, 200);
     }
   } catch( error ) {

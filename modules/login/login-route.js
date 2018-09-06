@@ -8,4 +8,9 @@ router.post('/admin', (req, res) => {
     controller.loginAdmin(data, res);
 });
 
+router.post('/teacher', (req, res) => {
+    const data = { ...req.body};
+    controller.loginTeacher(data, res);
+});
+
 module.exports = router;
