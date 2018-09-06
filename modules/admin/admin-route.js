@@ -2,6 +2,10 @@ const express = require('express');
 
 const router = express.Router();
 const controller = require('./admin-controller');
+const auth = require('../../services/authenticate');
+
+// Authentication Middleware
+router.use('/', auth.ensureAuthenticated);
 
 router.post('/getStudentByClass', (req, res) => {
   const data = { ...req.body };

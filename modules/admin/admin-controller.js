@@ -3,6 +3,7 @@ const { Student } = require('../student/student-model');
 const { SuccessMessages, ErrorMessages } = require('../../constants');
 const mongoService = require('../../services/mongoService');
 const response = require('../../utils/response');
+const { otherStrings } = require('../../constants');
 
 const addStudent = async (data, res) => {
   try {
@@ -100,10 +101,10 @@ const getTeachers = async (res) => {
 };
 
 module.exports = {
-    addStudent,
-    deleteStudent,
-    getStudentByClass,
-    addTeacher,
-    deleteTeacher,
-    getTeachers
+  addStudent,
+  deleteStudent,
+  getStudentByClass,
+  addTeacher,
+  deleteTeacher,
+  getTeachers
 };
