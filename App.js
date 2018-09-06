@@ -20,7 +20,7 @@ mongoose.connection.on('error', (err) => {
   console.log(`Database error ${err}`);
 });
 
-autoIncrement.initialize(connection);
+autoIncrement.initialize(mongoose.connection);
 
 // MIDDLEWARES
 app.use(bodyParser.urlencoded({
