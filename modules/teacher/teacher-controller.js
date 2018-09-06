@@ -2,19 +2,21 @@ const { Student } = require('../student/student-model');
 const { Teacher } = require('../teacher/teacher-model');
 const { Attendancne, addAttendanceMethod } = require('../attendance/attendance-model');
 const mongoService = require('../../services/mongoService');
+const response = require('../../utils/response');
+const { SuccessMessages, ErrorMessages } = require('../../constants');
 
 const getStudentsByClass = async (data, res) => {
   try{
     const { classname } = data;
     const students =  await mongoService.findUser({ classname }, Student);
     if(students){
-      return res.send({ success: true, msg: 'Students list', students });
+      response.handleSuccess(res, SuccessMessages.RECORDS_FOUND, 200, students);
     } else {
-        return res.send({ success: false, msg: 'Students not found' });
+      response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
     }
   } catch (error) {
     console.log(error)
-    return res.send({ success: false, msg: 'INTERNAL SERVER ERROR' });
+    response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500);
   } 
 };
 
@@ -29,10 +31,10 @@ const takeAttendance = async (data, res) => {
     //       element['date'] = new Date();
     //     addAttendanceMethod(element);
     //    });
-    return  res.send({ success: true, msg: 'Attendance successful' });
+    response.handleSuccess(res, SuccessMessages.RECORD_SUCCESS, 200);
   } catch (error) {
     console.log(error);
-    return res.send({ success: true, msg: 'INTERNAL SERVER ERROR' });
+    response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500);
   }
 };
 

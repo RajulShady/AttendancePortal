@@ -1,6 +1,7 @@
 const SuccessMessages = {
   RECORD_SUCCESS: 'Record has been added successfully',
   RECORD_DELETED: 'Record has been deleted successfully',
+  RECORDS_FOUND: 'Records has been found successfully',
 };
 
 const ErrorMessages = {

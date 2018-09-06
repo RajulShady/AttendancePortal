@@ -2,15 +2,16 @@ const { Teacher } = require('../teacher/teacher-model');
 const { Student } = require('../student/student-model');
 const { SuccessMessages, ErrorMessages } = require('../../constants');
 const mongoService = require('../../services/mongoService');
+const response = require('../../utils/response');
 
 const addStudent = async (data, res) => {
   try {
     if (!data.name || !data.classname) {
-      res.send({ success: false, msg: ErrorMessages.INVALID_CEDENTIALS});
+      return response.handleError(res, ErrorMessages.INVALID_CEDENTIALS, 400);
     }
     else{
       await mongoService.createNew(data, Student);
-      res.send({ success: true, msg: SuccessMessages.RECORD_SUCCESS });
+      return response.handleSuccess(res, SuccessMessages.RECORD_SUCCESS, 200);
     }
   //   const student = await findStudentByRollno(data.studentrollno);
   //   if (student) {
@@ -21,7 +22,7 @@ const addStudent = async (data, res) => {
   //   }
   } catch (error) {
     console.log(error);
-    res.send({ success: false, msg: ErrorMessages.INTERNAL_SERVER_ERROR });
+    return response.handleServerError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500, error);
   }
 };
 
@@ -30,14 +31,14 @@ const deleteStudent = async (data, res) => {
     const { studentrollno } = data;
     const student = await mongoService.findOne({ studentrollno }, Student);
     if (!student) {
-      res.send({ success: true, msg: ErrorMessages.RECORD_NOT_EXIST });
+      return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
     } else {
         await mongoService.findAndRemove({ studentrollno }, Student);
-        res.send({ success: true, msg: SuccessMessages.RECORD_DELETED });
+        return response.handleSuccess(res, SuccessMessages.RECORD_DELETED, 200);
     }
   } catch (error) {
       console.log(error);
-      res.send({ success: false, msg: ErrorMessages.INTERNAL_SERVER_ERROR });
+      return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500);
   }
 };
 
@@ -46,25 +47,25 @@ const getStudentByClass = async (data, res) => {
     const { classname } = data;
     const students =  await mongoService.findUser({ classname }, Student);
     if(students){
-      return res.send({ success: true, msg: 'Students list', students });
+      return response.handleSuccess(res, SuccessMessages.RECORDS_FOUND, 200, students);
     } else {
-        return res.send({ success: false, msg: ErrorMessages.RECORD_NOT_EXIST });
+      return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
     }
     } catch (error) {
-      res.send({success: false, msg: ErrorMessages.INTERNAL_SERVER_ERROR });
+      return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500);
   }
 };
 
 const addTeacher = async (data, res) => {
   try {
     if (!data.name) {
-      res.send({ success: false, msg: ErrorMessages.INVALID_CEDENTIALS });
+      return response.handleError(res, ErrorMessages.INVALID_CEDENTIALS, 400);
     } else {
       await mongoService.createNew(data, Teacher);
-      res.send({ success: true, msg: SuccessMessages.RECORD_SUCCESS });
+      return response.handleSuccess(res, SuccessMessages.RECORD_SUCCESS, 200);
     }
   } catch( error ) {
-    res.send({ success: false, msg: ErrorMessages.INVALID_CEDENTIALS });
+    return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500);
   }
 };
 
@@ -74,13 +75,13 @@ const deleteTeacher = async (data, res) => {
     const teacher = await mongoService.findOne({ teacherId }, Teacher);
     if(teacher) {
       await mongoService.findAndRemove({ teacherId }, Teacher);
-      return res.send({ success: true, msg: SuccessMessages.RECORD_DELETED });
+      return response.handleSuccess(res, SuccessMessages.RECORD_DELETED, 200);
     } else {
-      return res.send({ success: false, msg: ErrorMessages.RECORD_NOT_EXIST });
+      return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
     }
   } catch (error) {
     console.log(error);
-    return res.send({ success: false, msg: ErrorMessages.INTERNAL_SERVER_ERROR });
+    return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500);
     }
 };
 
@@ -88,13 +89,13 @@ const getTeachers = async (res) => {
   try {
     const teachers = await mongoService.findAll(Teacher);
     if(teachers) {
-      res.send({ success: true, msg: 'Teachers list', teachers });
+      return response.handleSuccess(res, SuccessMessages.RECORDS_FOUND, 200, teachers);
     } else {
-      res.send({ success: false, msg: ErrorMessages.RECORD_NOT_EXIST });
+      response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
     } 
   } catch (error) {
     console.log(error);
-    res.send({ success: false, msg: ErrorMessages.INTERNAL_SERVER_ERROR });
+    return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500);
   }
 };
 
