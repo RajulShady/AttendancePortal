@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+const date = new Date().getDay();
 const attendanceSchema = mongoose.Schema({
   classname: {
     type: String,
@@ -19,13 +20,13 @@ const attendanceSchema = mongoose.Schema({
     required: true,
   },
   date: {
-    type: Date,
+    type: String,
     required: true,
   }
 });
 
-const Attendancne = mongoose.model('attendanceSchema', attendanceSchema);
+const Attendance = mongoose.model('attendanceSchema', attendanceSchema);
 
 module.exports = {
-  Attendancne,
+  Attendance,
 };

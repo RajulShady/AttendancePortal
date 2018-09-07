@@ -19,6 +19,11 @@ router.post('/takeAttendance', permission(teacher), (req, res) => {
   controller.takeAttendance(data, res);
 });
 
+router.post('/updateAttendance', permission(teacher), (req, res) => {
+  const data = { ...req.body };
+  controller.updateAttendance(data, res);
+});
+
 router.post('/changePassword', permission(teacher), (req, res) => {
   const data = { ...req.body };
   controller.changePassword(data, res);

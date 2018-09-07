@@ -5,11 +5,13 @@ const teacherSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    index: true,
   },
   password: {
     type: String,
     required: true,
-    default: '1234',
+    default: '123456',
+    minlength: 6,
   },
   role: {
     type: Number,
@@ -27,6 +29,7 @@ const updatePassword = (teacher) => {
     return Newteacher.updateOne(query, { $set : { teacherId, password, role: 2 }});
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };
 

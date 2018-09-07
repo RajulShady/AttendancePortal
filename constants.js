@@ -5,6 +5,7 @@ const SuccessMessages = {
   ADMIN_LOGIN_SUCCESSFUL: 'Admin login successful',
   TEACHER_LOGIN_SUCCESSFUL: 'Teacher login successful',
   PASSWORD_CHANGED: 'Password changed successfully',
+  UPDATE_SUCCESS: 'Record updated successfully',
 };
 
 const ErrorMessages = {
@@ -12,6 +13,7 @@ const ErrorMessages = {
   INTERNAL_SERVER_ERROR: 'Internal server error',
   RECORD_NOT_EXIST: 'Record does not exist',
   INVALID_PASSCODE: 'Invalid password',
+  SAME_PASSWORD: 'Do not use same password again',
 };
 
 const otherStrings = {

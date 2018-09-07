@@ -9,6 +9,7 @@ const studentSchema = new mongoose.Schema({
   classname: {
     type: String,
     required: true,
+    index: true,
   },
 });
 

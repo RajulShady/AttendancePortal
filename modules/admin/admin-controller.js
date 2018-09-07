@@ -47,8 +47,11 @@ const deleteStudent = async (data, res) => {
 const getStudentByClass = async (data, res) => {
   try{
     const { classname } = data;
+    if (!classname) {
+      return response.handleError(res, ErrorMessages.INVALID_CEDENTIALS, 400);
+    } 
     const students =  await mongoService.findUser({ classname }, Student);
-    if(students){
+    if (students.length > 0) {
       return response.handleSuccess(res, SuccessMessages.RECORDS_FOUND, 200, students);
     } else {
       return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
@@ -60,7 +63,7 @@ const getStudentByClass = async (data, res) => {
 
 const addTeacher = async (data, res) => {
   try {
-    if (!data.name) {
+    if (!data.name || data.classAssigned.length <= 0) {
       return response.handleError(res, ErrorMessages.INVALID_CEDENTIALS, 400);
     } else {
       const teacherAdded = await mongoService.createNew(data, Teacher);
@@ -81,6 +84,7 @@ const deleteTeacher = async (data, res) => {
     const teacher = await mongoService.findOne({ teacherId }, Teacher);
     if(teacher) {
       await mongoService.findAndRemove({ teacherId }, Teacher);
+      await mongoService.findAndRemove({ teacherId }, Newteacher);
       return response.handleSuccess(res, SuccessMessages.RECORD_DELETED, 200);
     } else {
       return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
@@ -97,7 +101,7 @@ const getTeachers = async (res) => {
     if(teachers) {
       return response.handleSuccess(res, SuccessMessages.RECORDS_FOUND, 200, teachers);
     } else {
-      response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
+      return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
     } 
   } catch (error) {
     console.log(error);

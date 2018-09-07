@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const bcrypt =require('bcrypt');
 const { SuccessMessages, ErrorMessages } = require('../../constants');
 const response = require('../../utils/response');
 const { otherStrings } = require('../../constants');
@@ -33,26 +34,44 @@ const loginAdmin = (data, res) => {
 const loginTeacher = async (data, res) => {
   try {
     const { teacherId, password, role } = data;
+    if (!teacherId || !password || !role) {
+      return response.handleError(res, ErrorMessages.INVALID_CEDENTIALS, 400);
+    }
     const teacher = await mongoService.findOne({ teacherId }, Newteacher);
     if (teacher) {
-      if (password === teacher.password) {
+      // mongoService.comparePassword(password, teacher.password, (error, isMatch) => {
+      //   if (error) throw error;
+      //   if (isMatch) {
+      //     const payload = {
+      //       date: new Date(),
+      //       id: teacherId, 
+      //       role: role,
+      //     };
+      //     const token = jwt.sign(payload, otherStrings.secret, {
+      //       expiresIn: '12h',
+      //     });
+      //     return response.handleSuccess(res, SuccessMessages.TEACHER_LOGIN_SUCCESSFUL, 200);
+      //   } else{
+      //     console.log('hey');
+      //     return response.handleError(res, ErrorMessages.INVALID_PASSCODE, 400);
+      //   }
+      // });
+      if (password == teacher.password) {
         const payload = {
           date: new Date(),
-          id: teacherId, 
+          id: teacherId,
           role: role,
         };
         const token = jwt.sign(payload, otherStrings.secret, {
           expiresIn: '12h',
         });
-        response.handleSuccess(res, SuccessMessages.TEACHER_LOGIN_SUCCESSFUL, 200, token);
-      } else {
-        response.handleError(res, ErrorMessages.INVALID_PASSCODE, 400);
+        return response.handleSuccess(res, SuccessMessages.TEACHER_LOGIN_SUCCESSFUL, 200, token);
       }
     } else {
-      response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
+      return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
     }
   } catch (error) {
-    response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500, error);
+    return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500, error);
   }
 
 };
