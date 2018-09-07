@@ -1,7 +1,7 @@
 module.exports = function permission(...allowed) {
     const isAllowed = (role) => {
         for (let i = 0; i < allowed.length; i += 1) {
-          if (allowed[i].id === role) {
+          if (allowed[i].id == role) {
             return true;
           }
         }

@@ -7,12 +7,13 @@ const mongoService = require('../../services/mongoService');
 
 const loginAdmin = (data, res) => {
   try {
-    const { adminId, password } = data;
+    const { adminId, password, role } = data;
     if (adminId === otherStrings.adminId) {
       if (password === otherStrings.adminPasscode) {
         const payload = {
           date: new Date(),
-          id: adminId, 
+          id: adminId,
+          role: role, 
         };
         const token = jwt.sign(payload, otherStrings.secret, {
           expiresIn: '12h',
@@ -31,13 +32,14 @@ const loginAdmin = (data, res) => {
 
 const loginTeacher = async (data, res) => {
   try {
-    const { teacherId, password } = data;
+    const { teacherId, password, role } = data;
     const teacher = await mongoService.findOne({ teacherId }, Newteacher);
     if (teacher) {
       if (password === teacher.password) {
         const payload = {
           date: new Date(),
           id: teacherId, 
+          role: role,
         };
         const token = jwt.sign(payload, otherStrings.secret, {
           expiresIn: '12h',

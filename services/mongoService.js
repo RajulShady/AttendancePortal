@@ -6,7 +6,10 @@ const TeacherLogin = require('../modules/login/login-teacher-model');
 const createNew = (data, Model) => {
     const user = new Model(data);
     return user.save();
-  };
+};
+
+// const updateData = (_id, update, Model = User) =>
+//   Model.updateOne();
 
 const findAndRemove = (query, Model) => Model.findOneAndRemove(query);
 const findOne = (query, Model) => Model.findOne(query);

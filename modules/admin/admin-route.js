@@ -15,26 +15,26 @@ router.post('/getStudentByClass', permission(admin), (req, res) => {
   controller.getStudentByClass(data, res);
 });
 
-router.post('/addStudent', (req, res) =>  {
+router.post('/addStudent', permission(admin), (req, res) =>  {
   const data = { ...req.body };
   controller.addStudent(data, res);
 });
 
-router.delete('/deleteStudent', (req, res) => {
+router.delete('/deleteStudent', permission(admin), (req, res) => {
   const data = { ...req.body };
   controller.deleteStudent(data, res);
 });
 
-router.get('/getTeachers', (req, res) => {
+router.get('/getTeachers', permission(admin), (req, res) => {
   controller.getTeachers(res);
 });
 
-router.post('/addTeacher', (req, res) => {
+router.post('/addTeacher', permission(admin), (req, res) => {
   const data = { ...req.body };
   controller.addTeacher(data, res);
 });
 
-router.delete('/deleteTeacher', (req, res) => {
+router.delete('/deleteTeacher', permission(admin),(req, res) => {
   const data = { ...req.body };
   controller.deleteTeacher(data, res);
 });

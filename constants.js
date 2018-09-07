@@ -17,6 +17,7 @@ const ErrorMessages = {
 const otherStrings = {
   adminId: '676711',
   adminPasscode: 'ap1223aa',
+  adminRole: 1,
   secret: 'osdfhao$H$OHO$iohoiah$$$%hiohfg',
 }
 
