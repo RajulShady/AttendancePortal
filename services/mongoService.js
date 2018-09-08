@@ -33,7 +33,7 @@ const comparePassword = (password, hash, callback) => {
 
 const findAndRemove = (query, Model) => Model.findOneAndRemove(query);
 
-const findOne = (query, Model, callback) => Model.findOne(query, callback);
+const findOne = (query, Model) => Model.findOne(query);
 
 const UpdateAttendance = (query, present, Model) => Model.findOneAndUpdate(query, { isPresent: !present });
 

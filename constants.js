@@ -14,6 +14,7 @@ const ErrorMessages = {
   RECORD_NOT_EXIST: 'Record does not exist',
   INVALID_PASSCODE: 'Invalid password',
   SAME_PASSWORD: 'Do not use same password again',
+  UNAUTHORIZED_ACCESS: 'Unauthorized for the request',
 };
 
 const otherStrings = {

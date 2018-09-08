@@ -25,9 +25,26 @@ const getStudentsByClass = async (data, res) => {
   } 
 };
 
+const getClass = async (data, res) => {
+  try {
+    const { teacherId } = data;
+    const teacher = await mongoService.findOne({ teacherId }, Teacher);
+    if (teacher) {
+      return response.handleSuccess(res, SuccessMessages.RECORDS_FOUND, 200, teacher.classAssigned);
+    } else{
+      return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
+    }
+  } catch (error) {
+    return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500, error);
+  }
+};
+
 const takeAttendance = async (data, res) => {
   try {
     const { attendanceArray } = data;
+    const teacherId = attendanceArray[0].teacherId;
+    const teacher = await mongoService.findOne({ teacherId }, Teacher);
+    if (teacher.classAssigned.includes(attendanceArray[0].classname)) {
     for (element of attendanceArray) {
       let date = new Date().toDateString();
       date = date.split(' ');
@@ -36,6 +53,9 @@ const takeAttendance = async (data, res) => {
       await mongoService.createNew(element, Attendance);
     }
     return response.handleSuccess(res, SuccessMessages.RECORD_SUCCESS, 200);
+  } else {
+    return response.handleError(res, ErrorMessages.UNAUTHORIZED_ACCESS, 400);
+  }
   } catch (error) {
       return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500, error);
   }
@@ -88,4 +108,5 @@ module.exports = {
     takeAttendance,
     updateAttendance,
     changePassword,
+    getClass,
 };

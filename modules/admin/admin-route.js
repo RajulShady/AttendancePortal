@@ -30,6 +30,7 @@ router.get('/getTeachers', permission(admin), (req, res) => {
 });
 
 router.post('/addTeacher', permission(admin), (req, res) => {
+  console.log('jhj');
   const data = { ...req.body };
   controller.addTeacher(data, res);
 });

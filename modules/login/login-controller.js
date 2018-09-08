@@ -13,7 +13,7 @@ const loginAdmin = (data, res) => {
       if (password === otherStrings.adminPasscode) {
         const payload = {
           date: new Date(),
-          id: adminId,
+          adminId: adminId,
           role: role, 
         };
         const token = jwt.sign(payload, otherStrings.secret, {
@@ -59,7 +59,7 @@ const loginTeacher = async (data, res) => {
       if (password == teacher.password) {
         const payload = {
           date: new Date(),
-          id: teacherId,
+          teacherId: teacherId,
           role: role,
         };
         const token = jwt.sign(payload, otherStrings.secret, {
