@@ -9,15 +9,20 @@ const { Newteacher, updatePassword } = require('../login/login-teacher-model');
 
 const getStudentsByClass = async (data, res) => {
   try{
-    const { classname } = data;
+    const { classname, teacherId } = data;
     if (!classname) {
       return response.handleError(res, ErrorMessages.INVALID_CEDENTIALS, 200);
     }
-    const students =  await mongoService.findUser({ classname }, Student);
-    if(students.length > 0){
-      return response.handleSuccess(res, SuccessMessages.RECORDS_FOUND, 200, students);
+    const teacher = await mongoService.findOne({ teacherId }, Teacher);
+    if (teacher.classAssigned.includes(classname)) {
+      const students =  await mongoService.findUser({ classname }, Student);
+      if(students.length > 0){
+        return response.handleSuccess(res, SuccessMessages.RECORDS_FOUND, 200, students);
+      } else {
+        return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
+      }
     } else {
-      return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
+      return response.handleError(res, ErrorMessages.UNAUTHORIZED_ACCESS, 400);
     }
   } catch (error) {
       console.log(error)
@@ -41,15 +46,22 @@ const getClass = async (data, res) => {
 
 const takeAttendance = async (data, res) => {
   try {
-    const { attendanceArray } = data;
-    const teacherId = attendanceArray[0].teacherId;
+    const { attendanceArray, classname, teacherId } = data;
+    const redoAttendance = [];
+    console.log(attendanceArray);
     const teacher = await mongoService.findOne({ teacherId }, Teacher);
-    if (teacher.classAssigned.includes(attendanceArray[0].classname)) {
+    if (teacher.classAssigned.includes(classname)) {
     for (element of attendanceArray) {
+      // if (!element.studentrollno || !element.isPresent) {
+      //   redoAttendance.push(element);
+      //   continue;
+      // }
       let date = new Date().toDateString();
       date = date.split(' ');
       date = `${date[1]} ${date[2]} ${date[3]}`;
       element['date'] = date;
+      element['classname'] = classname;
+      element['teacherId'] = teacherId;
       await mongoService.createNew(element, Attendance);
     }
     return response.handleSuccess(res, SuccessMessages.RECORD_SUCCESS, 200);
