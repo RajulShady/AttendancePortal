@@ -3,7 +3,7 @@ const bcrypt =require('bcrypt');
 const { SuccessMessages, ErrorMessages } = require('../../constants');
 const response = require('../../utils/response');
 const { otherStrings } = require('../../constants');
-const { Newteacher } = require('./login-teacher-model');
+const { Teacher } = require('../teacher/teacher-model');
 const mongoService = require('../../services/mongoService');
 
 const loginAdmin = (data, res) => {
@@ -37,7 +37,7 @@ const loginTeacher = async (data, res) => {
     if (!teacherId || !password || !role) {
       return response.handleError(res, ErrorMessages.INVALID_CEDENTIALS, 400);
     }
-    const teacher = await mongoService.findOne({ teacherId }, Newteacher);
+    const teacher = await mongoService.findOne({ teacherId }, Teacher);
     if (teacher) {
       // mongoService.comparePassword(password, teacher.password, (error, isMatch) => {
       //   if (error) throw error;

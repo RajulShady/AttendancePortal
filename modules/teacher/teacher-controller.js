@@ -1,10 +1,9 @@
 const { Student } = require('../student/student-model');
-const { Teacher } = require('../teacher/teacher-model');
+const { Teacher, updatePassword } = require('../teacher/teacher-model');
 const { Attendance, addAttendanceMethod } = require('../attendance/attendance-model');
 const mongoService = require('../../services/mongoService');
 const response = require('../../utils/response');
 const { SuccessMessages, ErrorMessages } = require('../../constants');
-const { Newteacher, updatePassword } = require('../login/login-teacher-model');
 
 
 const getStudentsByClass = async (data, res) => {
@@ -99,7 +98,7 @@ const changePassword = async (data, res) => {
     if(!teacherId || !password){
       return response.handleError(res, ErrorMessages.INVALID_CEDENTIALS, 400);
     }
-    const teacher = await mongoService.findOne({ teacherId }, Newteacher);
+    const teacher = await mongoService.findOne({ teacherId }, Teacher);
     if (teacher) {
       if (teacher.password == password) {
         return response.handleError(res, ErrorMessages.SAME_PASSWORD, 400);
