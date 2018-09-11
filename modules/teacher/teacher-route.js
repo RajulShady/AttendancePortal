@@ -21,18 +21,14 @@ router.post('/getStudents', permission(teacher), (req, res) => {
 });
 
 router.post('/getClassList', permission(teacher), (req, res) => {
-  if(req.decoded.teacherId === req.body.teacherId) {
-    const data = { ...req.body};
-    controller.getClass(data, res);
-  } else {
-    response.handleError(res, ErrorMessages.UNAUTHORIZED_ACCESS, 400);
-  }
+  const data = { ...req.body};
+  controller.getClass(data, res);
 });
 
 router.post('/takeAttendance', permission(teacher), (req, res) => {
   const data = req.body;
-  const { teacherId, classname } = data;
-  if(teacherId && classname) {
+  const { teacherId, classId } = data;
+  if(teacherId && classId) {
     if (req.decoded.teacherId === teacherId) {
       controller.takeAttendance(data, res);
     } else {

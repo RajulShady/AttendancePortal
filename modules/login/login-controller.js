@@ -3,28 +3,32 @@ const bcrypt =require('bcrypt');
 const { SuccessMessages, ErrorMessages } = require('../../constants');
 const response = require('../../utils/response');
 const { otherStrings } = require('../../constants');
-const { Teacher } = require('../teacher/teacher-model');
+const Teacher = require('../teacher/teacher-model');
 const mongoService = require('../../services/mongoService');
+const Admin = require('../admin/admin-model');
 
-const loginAdmin = (data, res) => {
+const loginAdmin = async (data, res) => {
   try {
-    const { adminId, password, role } = data;
-    if (adminId === otherStrings.adminId) {
-      if (password === otherStrings.adminPasscode) {
-        const payload = {
-          date: new Date(),
-          adminId: adminId,
-          role: role, 
-        };
-        const token = jwt.sign(payload, otherStrings.secret, {
-          expiresIn: '12h',
-        });
-        return response.handleSuccess(res, SuccessMessages.ADMIN_LOGIN_SUCCESSFUL, 200, token);
-      } else {
+    const { adminId, password } = data;
+    const admin = await mongoService.findOne({ adminId }, Admin);
+    if (admin) {
+      await bcrypt.compare(password, admin.password, (err, isMatch) => {
+        if (err) throw err;
+        if (isMatch) {
+          const payload = {
+            date: new Date(),
+            adminId: admin.adminId,
+            role: admin.role,
+          };
+          const token = jwt.sign(payload, otherStrings.secret, {
+            expiresIn: '12h',
+          });
+          return response.handleSuccess(res, SuccessMessages.ADMIN_LOGIN_SUCCESSFUL, 200, token);
+        } 
         return response.handleError(res, ErrorMessages.INVALID_PASSCODE, 400);
-      }
+      });
     } else {
-      return response.handleError(res, ErrorMessages.INVALID_CEDENTIALS, 400);
+      return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
     }
     } catch (error) {
     return response.handleServerError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500, error);
@@ -33,40 +37,28 @@ const loginAdmin = (data, res) => {
 
 const loginTeacher = async (data, res) => {
   try {
-    const { teacherId, password, role } = data;
-    if (!teacherId || !password || !role) {
+    const { teacherId, password } = data;
+    if (!teacherId || !password) {
       return response.handleError(res, ErrorMessages.INVALID_CEDENTIALS, 400);
     }
     const teacher = await mongoService.findOne({ teacherId }, Teacher);
     if (teacher) {
-      // mongoService.comparePassword(password, teacher.password, (error, isMatch) => {
-      //   if (error) throw error;
-      //   if (isMatch) {
-      //     const payload = {
-      //       date: new Date(),
-      //       id: teacherId, 
-      //       role: role,
-      //     };
-      //     const token = jwt.sign(payload, otherStrings.secret, {
-      //       expiresIn: '12h',
-      //     });
-      //     return response.handleSuccess(res, SuccessMessages.TEACHER_LOGIN_SUCCESSFUL, 200);
-      //   } else{
-      //     console.log('hey');
-      //     return response.handleError(res, ErrorMessages.INVALID_PASSCODE, 400);
-      //   }
-      // });
-      if (password == teacher.password) {
-        const payload = {
-          date: new Date(),
-          teacherId: teacherId,
-          role: role,
-        };
-        const token = jwt.sign(payload, otherStrings.secret, {
-          expiresIn: '12h',
-        });
-        return response.handleSuccess(res, SuccessMessages.TEACHER_LOGIN_SUCCESSFUL, 200, token);
-      }
+      await bcrypt.compare(password, teacher.password, (err, isMatch) => {
+        if (err) throw err;
+        if (isMatch) {
+          const payload = {
+            date: new Date(),
+            teacherId: teacherId,
+            role: teacher.role,
+          };
+          const token = jwt.sign(payload, otherStrings.secret, {
+            expiresIn: '12h',
+          });
+          return response.handleSuccess(res, SuccessMessages.TEACHER_LOGIN_SUCCESSFUL, 200, token);
+        } else {
+          return response.handleError(res, ErrorMessages.INVALID_PASSCODE, 400);
+        }
+      });
     } else {
       return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
     }

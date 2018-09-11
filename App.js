@@ -9,6 +9,7 @@ const autoIncrement = require('mongoose-auto-increment');
 
 const adminRoute = require('./modules/admin/admin-route');
 const loginRoute = require('./modules/login/login-route');
+const signupRoute = require('./modules/signup/signup-route');
 const teacherRoute = require('./modules/teacher/teacher-route');
 const config = require('./config/config');
 
@@ -42,6 +43,7 @@ app.use((req, res, next) => {
 
 app.use('/admin', adminRoute);
 app.use('/login', loginRoute);
+app.use('/signup', signupRoute);
 app.use('/teacher', teacherRoute);
 
 app.listen(port, () => console.log('database connected'));
