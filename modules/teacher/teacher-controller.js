@@ -7,80 +7,48 @@ const response = require('../../utils/response');
 const { SuccessMessages, ErrorMessages, otherStrings } = require('../../constants');
 
 
-const getStudentsByClass = async (data, res) => {
-  try{
-    const { classId, teacherId } = data;
-    if (!classId || !teacherId) {
-      return response.handleError(res, ErrorMessages.INVALID_CEDENTIALS, 200);
-    }
-    const teacher = await mongoService.findOne({ teacherId }, Teacher);
-    if (teacher) {
-        const students =  await mongoService.findUser({ classId }, Student).populate('classId', 'classname');
-        if(students.length > 0){
-          return response.handleSuccess(res, SuccessMessages.RECORDS_FOUND, 200, students);
-        } else {
-          return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
-        }
+const addTeacher = async (data, res) => {
+  try {
+    if (!data.name || data.classAssigned.length <= 0) {
+      return response.handleError(res, ErrorMessages.INVALID_CEDENTIALS, 400);
     } else {
-      return response.handleError(res, SuccessMessages.RECORD_NOT_EXIST, 400);
+      const hash = await bcrypt.hash('123456', otherStrings.saltrounds);
+      data['password'] = hash;
+      const teacherAdded = await mongoService.createNew(data, Teacher);
+      return response.handleSuccess(res, SuccessMessages.RECORD_SUCCESS, 200);
     }
-  } catch (error) {
-      console.log(error)
-      return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500);
-  } 
+  } catch( error ) {
+    return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500);
+  }
 };
 
-const getClass = async (data, res) => {
+const deleteTeacher = async (data, res) => {
   try {
     const { teacherId } = data;
-    const teacher = await mongoService.findOne({ teacherId }, Teacher).populate('classAssigned', 'classname');
-    if (teacher) {
-      return response.handleSuccess(res, SuccessMessages.RECORDS_FOUND, 200, teacher.classAssigned);
-    } else{
+    const teacher = await mongoService.findOne({ teacherId }, Teacher);
+    if(teacher) {
+      await mongoService.findAndRemove({ teacherId }, Teacher);
+      return response.handleSuccess(res, SuccessMessages.RECORD_DELETED, 200);
+    } else {
       return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
     }
   } catch (error) {
-    return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500, error);
-  }
+    console.log(error);
+    return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500);
+    }
 };
 
-const takeAttendance = async (data, res) => {
+const getTeachers = async (res) => {
   try {
-    const { attendanceArray, classId, teacherId, lectureNo } = data;
-    const teacher = await mongoService.findOne({ teacherId }, Teacher);
-    for (element of attendanceArray) {
-      let date = new Date().toDateString();
-      date = date.split(' ');
-      date = `${date[1]} ${date[2]} ${date[3]}`;
-      element['date'] = date;
-      element['classId'] = classId;
-      element['teacherId'] = teacherId;
-      element['lectureNo'] = lectureNo;
-      await mongoService.createNew(element, Attendance);
-    }
-    return response.handleSuccess(res, SuccessMessages.RECORD_SUCCESS, 200);
+    const teachers = await mongoService.findAll(Teacher).populate('classAssigned', 'classname');
+    if(teachers) {
+      return response.handleSuccess(res, SuccessMessages.RECORDS_FOUND, 200, teachers);
+    } else {
+      return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
+    } 
   } catch (error) {
-      return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500, error);
-  }
-};
-
-const updateAttendance = async (data, res) => {
-  try {
-    const { date, teacherId, studentrollno, classId, lectureNo } = data;
-    if (!date || !teacherId || !studentrollno || !classId || !lectureNo) {
-      return response.handleError(res, ErrorMessages.INVALID_CEDENTIALS, 400);
-    } else{
-      const query = { date, teacherId, studentrollno, classId, lectureNo };
-      const studentAttendance = await mongoService.findOne(query, Attendance);
-      if (studentAttendance) {
-        await mongoService.UpdateAttendance(query, studentAttendance.isPresent, Attendance);
-        return response.handleSuccess(res, SuccessMessages.UPDATE_SUCCESS, 200);
-      } else{
-        return response.handleError(res, ErrorMessages.RECORD_NOT_EXIST, 400);
-      }
-    }
-  } catch (error) {
-    return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 200);
+    console.log(error);
+    return response.handleError(res, ErrorMessages.INTERNAL_SERVER_ERROR, 500);
   }
 };
 
@@ -107,9 +75,8 @@ const changePassword = async (data, res) => {
 };
 
 module.exports = {
-    getStudentsByClass,
-    takeAttendance,
-    updateAttendance,
-    changePassword,
-    getClass,
+  addTeacher,
+  deleteTeacher,
+  getTeachers,
+  changePassword,
 };

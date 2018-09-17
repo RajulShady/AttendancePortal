@@ -11,6 +11,9 @@ const adminRoute = require('./modules/admin/admin-route');
 const loginRoute = require('./modules/login/login-route');
 const signupRoute = require('./modules/signup/signup-route');
 const teacherRoute = require('./modules/teacher/teacher-route');
+const studentRoute = require('./modules/student/student-route');
+const classRoute = require('./modules/class/class-route');
+const attendanceRoute = require('./modules/attendance/attendance-route');
 const config = require('./config/config');
 
 // DATABASE CONNECTIONS
@@ -41,9 +44,12 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/teacher', teacherRoute);
 app.use('/admin', adminRoute);
+app.use('/student', studentRoute);
+app.use('/class', classRoute);
+app.use('/attendance', attendanceRoute);
 app.use('/login', loginRoute);
 app.use('/signup', signupRoute);
-app.use('/teacher', teacherRoute);
 
 app.listen(port, () => console.log('database connected'));
